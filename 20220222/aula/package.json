@@ -1,0 +1,20 @@
+{
+  "name": "aula",
+  "version": "1.0.0",
+  "description": "Aula do dia 22/02/2022",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eu mesmo",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "moment": "^2.29.1",
+    "string": "^3.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
