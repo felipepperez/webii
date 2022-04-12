@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col s6 offset-s3 center">
+                <h2>Contador dos usuarios</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="row">
+                    <% users.forEach(function(user) { %>
+                        <div class="col s12 m4">
+                            <div class="card">
+                                <div class="card-content center">
+                                    <span class="card-title"><%= user.usuario %></span>
+                                </div>
+                                <div class="card-action center white-text" style="background: rgb(2,0,36);
+                                background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(71,9,121,1) 35%, rgba(170,27,27,1) 100%);">
+                                    <h3><%= user.count %></h3>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s6 offset-s3 center">
+                <a class="waves-effect waves-light btn" href="/">Voltar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
+</html>
