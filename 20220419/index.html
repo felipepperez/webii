@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="rudman">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="plugins/css/style.css">
+
+    <title id="title-page">Chat</title>
+</head>
+
+<body>
+    <div class="navbar-fixed-bottom msg-body">
+        <div class="col-sm-4 col-sm-offset-8 msg-template">
+            <div class="msg-container col-sm-12" style="height: 250px;margin-bottom:2%;">
+
+            </div>
+
+            <div class="panel-footer chat-bottom-bar">
+                <form id="chat" style="display:inherit" method="post" encrypt="multipart/form-data">
+
+                    <div class="input-group">
+                        <input id="msg" type="text" class="form-control input-sm chat-input"
+                            placeholder="Digite seu nome" />
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-sm chat-submit-button">
+                                <i class="glyphicon glyphicon-send"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <template id="receive">
+        <div class="col-md-12 col-xs-12">
+            <div class="chat-msg receive">
+                <div class="chat-msg-author">
+                    <strong>Invite</strong>
+                </div>
+                <p>Content</p>
+            </div>
+        </div>
+    </template>
+    <template id="send">
+        <div class="col-md-12 col-xs-12">
+            <div class="chat-msg send">
+                <div class="chat-msg-author">
+                    <strong>Rudman</strong>
+                </div>
+                <p>Content</p>
+            </div>
+        </div>
+    </template>
+    <script type="text/javascript" src="plugins/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        //$('.msg-container').append($('#send').html());
+        //$('.msg-container').append($('#receive').html());
+
+        var first = true;
+        var name = '';
+        $('#chat').on('submit', (e) => {
+            e.preventDefault();
+            if (first) {
+                if ($('#msg').val()) {
+                    name = $('#msg').val();
+                    $('#msg').val('');
+                    $('#msg').attr('placeholder', 'Digite sua mensagem');
+                    socket.emit('name', name);
+                    first = false;
+                }
+            } else {
+                if ($('#msg').val()) {
+                    socket.emit('chat message', $('#msg').val());
+                    var html = $($('#send').html());
+                    $(html).find('.chat-msg').addClass('box');
+                    $(html).find('.chat-msg').css({ 'background': color, 'margin-left': '81px' });
+                    $(html).find('p').html($('#msg').val());
+                    $(html).find('strong').html(name);
+                    $('.msg-container').append(html);
+                    $('.msg-container').animate({scrollTop:$('.msg-container').prop("scrollHeight")},10);
+                    $('#msg').val('');
+                }
+            }
+        });
+
+        var color = '';
+        socket.on('color', (colorServer) => {
+            color = colorServer;
+        });
+
+        socket.on('user',(user)=>{
+            var html = $($('#receive').html());
+            $(html).find('.chat-msg').addClass('box');
+            $(html).find('.chat-msg').css({ 'background': user.color, 'margin-right': '81px' });
+            $(html).find('p').html("entrou");
+            $(html).find('strong').html(user.name);
+            $('.msg-container').append(html);
+            $('.msg-container').animate({scrollTop:$('.msg-container').prop("scrollHeight")},10);
+        })
+
+        socket.on('exit',(user)=>{
+            var html = $($('#receive').html());
+            $(html).find('.chat-msg').addClass('box');
+            $(html).find('.chat-msg').css({ 'background': user.color, 'margin-right': '81px' });
+            $(html).find('p').html("saiu");
+            $(html).find('strong').html(user.name);
+            $('.msg-container').append(html);
+            $('.msg-container').animate({scrollTop:$('.msg-container').prop("scrollHeight")},10);
+        })
+
+        socket.on('chat message', (msg) => {
+            //console.log(msg);
+            var html = $($('#receive').html());
+            $(html).find('.chat-msg').addClass('box');
+            $(html).find('.chat-msg').css({ 'background': msg.color, 'margin-right': '81px' });
+            $(html).find('p').html(msg.msg);
+            $(html).find('strong').html(msg.name);
+            $('.msg-container').append(html);
+            $('.msg-container').animate({scrollTop:$('.msg-container').prop("scrollHeight")},10);
+        });
+    </script>
+</body>
+
+</html>
