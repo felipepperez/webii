@@ -17,7 +17,7 @@ var cors = require("cors");
 app.use(cors());
 
 mongoose
-    .connect("mongodb://root:example@mongo:27017/sample", {
+    .connect("mongodb://root:example@mongo:27017/person", {
         auth: {
             username: "root",
             password: "example"
