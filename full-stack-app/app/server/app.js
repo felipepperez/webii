@@ -3,13 +3,13 @@ const Express = require("express");
 const ExpressGraphQL = require('express-graphql').graphqlHTTP;
 const mongoose = require("mongoose");
 const {
-    GraphQLID,
-    GraphQLString,
-    GraphQLList,
-    GraphQLType,
-    GraphQLSchema,
-    GraphQLNonNull,
-    GraphQLObjectType
+	GraphQLID,
+	GraphQLString,
+	GraphQLList,
+	GraphQLType,
+	GraphQLSchema,
+	GraphQLNonNull,
+	GraphQLObjectType
 } = require("graphql");
 var app = Express();
 var cors = require("cors");
@@ -17,18 +17,18 @@ var cors = require("cors");
 app.use(cors());
 
 mongoose
-    .connect("mongodb://root:example@mongo:27017/person", {
-        auth: {
-            username: "root",
-            password: "example"
-        }
-    })
-    .then(() => console.log("Connected to database..."))
-    .catch(err => console.error(err));
+	.connect("mongodb://root:example@mongo:27017/person", {
+		auth: {
+			username: "root",
+			password: "example"
+		}
+	})
+	.then(() => console.log("Connected to database..."))
+	.catch(err => console.error(err));
 
 const PersonModel = mongoose.model("person", {
-    firstName: String,
-    lastName: String
+	firstName: String,
+	lastName: String
 });
 
 const PersonType = new GraphQLObjectType({
@@ -48,7 +48,7 @@ const schema = new GraphQLSchema({
 
 			// name of the query, people
 			people: {
-				 // the type of response this query will return, here PersonType
+				// the type of response this query will return, here PersonType
 				type: GraphQLList(PersonType),
 				// resolver is required
 				resolve: (root, args, context, info) => {
@@ -71,11 +71,11 @@ const schema = new GraphQLSchema({
 			// Query 3
 			peopleByName: {
 				type: GraphQLList(PersonType),
-				args: { 
-					firstName: { type: GraphQLString } 
+				args: {
+					firstName: { type: GraphQLString }
 				},
 				resolve: (root, args, context, info) => {
-					return PersonModel.find({'firstName':args.firstName}).exec();
+					return PersonModel.find({ 'firstName': args.firstName }).exec();
 				}
 			}
 		}
@@ -83,9 +83,9 @@ const schema = new GraphQLSchema({
 
 	// Mutation 1
 	mutation: new GraphQLObjectType({
-		name: "Create",
-		fields: {
-			people: {
+		name: "Mutation",
+		fields: () => ({
+			create: {
 				type: PersonType,
 				args: {
 					firstName: { type: GraphQLString },
@@ -95,12 +95,29 @@ const schema = new GraphQLSchema({
 					var people = new PersonModel(args);
 					return people.save();
 				}
+			},
+			update: {
+				type: PersonType,
+				args: {
+					id: { type: GraphQLNonNull(GraphQLID) },
+					firstName: { type: GraphQLString },
+					lastName: { type: GraphQLString }
+				},
+				resolve: async (root, args, context, info) => {
+					return PersonModel.findByIdAndUpdate(args.id, { firstName: args.firstName, lastName: args.lastName }, function (err, result) {
+						if (err) {
+							return err;
+						} else {
+							return result;
+						}
+					});
+				}
 			}
-		}
+		})
 	})
 });
 
-app.use("/person",ExpressGraphQL({schema, graphiql: true}));
+app.use("/person", ExpressGraphQL({ schema, graphiql: true }));
 
 app.listen(80, () => {
 	console.log("server running at 80");
